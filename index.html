@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>WeRoll Studio</title>
 <meta name="description" content="full-service social media studio">
-<meta name="theme-color" content="#EB564F">
+<meta name="theme-color" content="#FE4647">
 
 <!-- ikonka webu -->
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
@@ -44,13 +44,17 @@
   }
 
   :root {
-    /* barva značky: R 0.921 G 0.337 B 0.310 */
-    --red: #EB564F;
+    /* barva značky: R 0.921 G 0.337 B 0.310 (Display P3)
+       #FE4647 = stejná barva převedená do sRGB pro starší displeje */
+    --red: #FE4647;
     --white: #FFFFFF;
-    --blush: #F8B2AD;   /* světlý odstín */
-    --brick: #C93A33;   /* tmavší odstín */
+    --blush: #FFCBC8;   /* světlý odstín */
+    --brick: #D42F2E;   /* tmavší odstín */
     --wine: #9E2A25;    /* nejtmavší */
     --ink: var(--white);
+  }
+  @supports (color: color(display-p3 1 1 1)) {
+    :root { --red: color(display-p3 0.921 0.337 0.310); }
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
@@ -153,7 +157,7 @@
   /* ---------- 3) kontakt ---------- */
   .contact {
     position: relative; min-height: 100vh; min-height: 100svh;
-    background: var(--wine); color: var(--blush);
+    background: var(--red); color: var(--white);
     display: flex; flex-direction: column;
     padding: 0 clamp(16px, 5.6vw, 90px);
   }
@@ -161,26 +165,23 @@
     flex: 1; display: flex; flex-direction: column; justify-content: center;
     padding: 120px 0 60px;
   }
+  .contact .links { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; }
   .contact .big {
     font-weight: 900; line-height: 1.05;
     font-size: clamp(38px, 4.2vw, 64px);
-    display: inline-block; width: max-content;
     transition: color .2s ease;
   }
-  .contact .big:hover { color: var(--white); }
+  .contact .big:hover { color: var(--blush); }
   .contact address {
     font-style: normal; margin-top: clamp(28px, 4vw, 52px);
     font-weight: 700; line-height: 1.25;
     font-size: clamp(16px, 1.45vw, 21px);
   }
   .contact address a { transition: color .2s ease; }
-  .contact address a:hover { color: var(--white); }
   .contact footer {
-    display: flex; justify-content: space-between; align-items: flex-end; gap: 16px;
     padding: 0 0 22px;
     font-weight: 400; font-size: clamp(12px, 1.05vw, 15px);
   }
-  .contact footer .logo { width: clamp(74px, 7vw, 104px); color: var(--blush); }
 
   /* jemný nájezd obsahu */
   .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
@@ -196,7 +197,8 @@
 
   @media (max-width: 640px) {
     .corner { top: 16px; left: 16px; width: 38px; }
-    .contact footer { flex-direction: column-reverse; align-items: flex-start; }
+    .contact .links { gap: 22px; }
+    .contact .big { font-size: min(8.2vw, 38px); }
   }
   @media (prefers-reduced-motion: reduce) {
     .reveal { opacity: 1; transform: none; transition: none; }
@@ -228,16 +230,16 @@
   </section>
 
   <!-- 2) nebereme zakázky -->
-  <section class="closed" data-ink="#C93A33">
+  <section class="closed" data-ink="#D42F2E">
     <h2 class="reveal">Momentálně nebereme<br>nové zakázky.</h2>
   </section>
 
   <!-- 3) kontakt -->
-  <section class="contact" id="kontakt" data-ink="#F8B2AD">
+  <section class="contact" id="kontakt" data-ink="#FFFFFF">
     <div class="body">
-      <div class="reveal">
-        <a class="big" href="https://www.instagram.com/weroll.studio?utm_source=ig_web_button_share_sheet&amp;obrf=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener">Instagram</a><br>
-        <a class="big" href="tel:+420266266028">266 266 028</a><br>
+      <div class="links reveal">
+        <a class="big" href="https://www.instagram.com/weroll.studio?utm_source=ig_web_button_share_sheet&amp;obrf=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener">Instagram</a>
+        <a class="big" href="tel:+420266266028">266 266 028</a>
         <a class="big" href="mailto:hello@weroll.studio">hello@weroll.studio</a>
       </div>
       <address class="reveal">
@@ -247,8 +249,7 @@
       </address>
     </div>
     <footer>
-      <span>© 2026 weroll studio</span>
-      <a href="#top" aria-label="nahoru"><span class="logo"></span></a>
+      <span>© 2026</span>
     </footer>
   </section>
 </main>
