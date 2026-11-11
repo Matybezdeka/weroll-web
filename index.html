@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>weroll studio</title>
+<meta name="description" content="weroll studio">
+<link rel="icon" href="logo.webp">
+<link rel="preload" href="fonts/kumbh-sans-latin.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/kumbh-sans-latin-ext.woff2" as="font" type="font/woff2" crossorigin>
+<style>
+  /* Brandový font Kumbh Sans (variabilní, řezy 300–900), uložený přímo u webu */
+  @font-face {
+    font-family: "Kumbh Sans";
+    font-style: normal; font-weight: 100 900; font-display: block;
+    src: url(fonts/kumbh-sans-latin-ext.woff2) format("woff2");
+    unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C4, U+2113, U+2C60-2C7F, U+A720-A7FF;
+  }
+  @font-face {
+    font-family: "Kumbh Sans";
+    font-style: normal; font-weight: 100 900; font-display: block;
+    src: url(fonts/kumbh-sans-latin.woff2) format("woff2");
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+
+  :root {
+    /* barva značky: R 0.921 G 0.337 B 0.310 */
+    --red: #EB564F;
+    --white: #FFFFFF;
+    --blush: #F8B2AD;   /* světlý odstín */
+    --brick: #C93A33;   /* tmavší odstín */
+    --wine: #9E2A25;    /* nejtmavší */
+    --ink: var(--white);
+  }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  html { scroll-behavior: auto; }
+  body {
+    background: var(--red);
+    color: var(--white);
+    font-family: "Kumbh Sans", -apple-system, system-ui, "Segoe UI", Roboto, Arial, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+  ::selection { background: var(--wine); color: var(--white); }
+  a { color: inherit; text-decoration: none; }
+
+  /* ---------- logo jako maska (lze obarvit) ---------- */
+  .logo {
+    display: block;
+    aspect-ratio: 1490 / 540;
+    background-color: currentColor;
+    -webkit-mask: url(logo.webp) no-repeat;
+            mask: url(logo.webp) no-repeat;
+    -webkit-mask-size: 134.2% auto;
+            mask-size: 134.2% auto;
+    -webkit-mask-position: 51% 69%;
+            mask-position: 51% 69%;
+  }
+  .mark {
+    display: block;
+    aspect-ratio: 880 / 300;
+    background-color: currentColor;
+    -webkit-mask: url(logo.webp) no-repeat;
+            mask: url(logo.webp) no-repeat;
+    -webkit-mask-size: 227.3% auto;
+            mask-size: 227.3% auto;
+    -webkit-mask-position: 66% 43%;
+            mask-position: 66% 43%;
+  }
+
+  /* ---------- fixní ikona vlevo nahoře ---------- */
+  .corner {
+    position: fixed; top: 22px; left: 22px; z-index: 50;
+    width: 46px; color: var(--ink);
+    opacity: 0; transform: translateY(-6px);
+    transition: opacity .35s ease, transform .35s ease, color .35s ease;
+    pointer-events: none;
+  }
+  .corner.on { opacity: 1; transform: none; pointer-events: auto; }
+
+  /* ---------- ukazatel scrollu vpravo ---------- */
+  .rail {
+    position: fixed; right: 0; top: 0; bottom: 0; width: 6px; z-index: 50;
+    pointer-events: none;
+  }
+  .rail i {
+    position: absolute; right: 0; width: 4px; height: 44px;
+    background: var(--ink); opacity: .55; border-radius: 2px 0 0 2px;
+    transition: background .35s ease;
+  }
+
+  /* ---------- 1) intro + klienti (horizontální jízda) ---------- */
+  .ride { position: relative; height: 640vh; background: var(--red); }
+  .ride .stage {
+    position: sticky; top: 0; height: 100vh; height: 100svh;
+    overflow: hidden; display: flex; align-items: center;
+  }
+  .track {
+    display: flex; align-items: center; white-space: nowrap;
+    gap: clamp(90px, 14vw, 230px);
+    padding-left: calc(50vw - var(--logo-w) / 2);
+    padding-right: 50vw;
+    will-change: transform;
+    --logo-w: clamp(230px, 24vw, 360px);
+  }
+  .track .logo { width: var(--logo-w); flex: none; color: var(--white); }
+  .client {
+    flex: none;
+    font-weight: 900;
+    font-size: clamp(26px, 2.6vw, 40px);
+    color: var(--white);
+    line-height: 1;
+  }
+  /* první klient začíná až za pravým okrajem – na landingu není vidět */
+  .track .logo + .client {
+    margin-left: calc(50vw - var(--logo-w) / 2 - clamp(90px, 14vw, 230px) + 40px);
+  }
+
+  /* ---------- 2) nebereme zakázky ---------- */
+  .closed {
+    position: relative; min-height: 100vh; min-height: 100svh;
+    background: var(--blush); color: var(--brick);
+    display: grid; place-items: center; text-align: center;
+    padding: 80px 16px;
+  }
+  .closed h2 {
+    margin: 0; font-weight: 900; line-height: 1.02;
+    font-size: clamp(30px, 4.4vw, 64px);
+  }
+
+  /* ---------- 3) kontakt ---------- */
+  .contact {
+    position: relative; min-height: 100vh; min-height: 100svh;
+    background: var(--wine); color: var(--blush);
+    display: flex; flex-direction: column;
+    padding: 0 clamp(16px, 5.6vw, 90px);
+  }
+  .contact .body {
+    flex: 1; display: flex; flex-direction: column; justify-content: center;
+    padding: 120px 0 60px;
+  }
+  .contact .big {
+    font-weight: 900; line-height: 1.05;
+    font-size: clamp(38px, 4.2vw, 64px);
+    display: inline-block; width: max-content;
+    transition: color .2s ease;
+  }
+  .contact .big:hover { color: var(--white); }
+  .contact address {
+    font-style: normal; margin-top: clamp(28px, 4vw, 52px);
+    font-weight: 700; line-height: 1.25;
+    font-size: clamp(16px, 1.45vw, 21px);
+  }
+  .contact address a { transition: color .2s ease; }
+  .contact address a:hover { color: var(--white); }
+  .contact footer {
+    display: flex; justify-content: space-between; align-items: flex-end; gap: 16px;
+    padding: 0 0 22px;
+    font-weight: 400; font-size: clamp(12px, 1.05vw, 15px);
+  }
+  .contact footer .logo { width: clamp(74px, 7vw, 104px); color: var(--blush); }
+
+  /* jemný nájezd obsahu */
+  .reveal { opacity: 0; transform: translateY(24px); transition: opacity .7s ease, transform .7s cubic-bezier(.2,.7,.2,1); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* ---------- úvodní loader jako originál ---------- */
+  .loader {
+    position: fixed; inset: 0; z-index: 100; background: var(--red);
+    display: grid; place-items: center; transition: opacity .5s ease .2s, visibility 0s linear .7s;
+  }
+  .loader .logo { width: clamp(230px, 24vw, 360px); color: var(--white); }
+  body.ready .loader { opacity: 0; visibility: hidden; }
+
+  @media (max-width: 640px) {
+    .corner { top: 16px; left: 16px; width: 38px; }
+    .contact footer { flex-direction: column-reverse; align-items: flex-start; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { opacity: 1; transform: none; transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="loader" aria-hidden="true"><span class="logo"></span></div>
+
+<a class="corner" href="#top" aria-label="weroll studio – nahoru"><span class="mark"></span></a>
+<div class="rail" aria-hidden="true"><i></i></div>
+
+<main id="top">
+  <!-- 1) logo + klienti -->
+  <section class="ride" aria-label="Klienti">
+    <div class="stage">
+      <div class="track">
+        <h1 class="logo" role="img" aria-label="weroll studio" style="margin:0"></h1>
+        <span class="client">Radago</span>
+        <span class="client">M Day 2027</span>
+        <span class="client">Ricard &amp; Bonette</span>
+        <span class="client">Luxent</span>
+        <span class="client">BMW Renocar</span>
+        <span class="client">Silver Lining</span>
+        <span class="client">Czech M Club</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2) nebereme zakázky -->
+  <section class="closed" data-ink="#C93A33">
+    <h2 class="reveal">Momentálně nebereme<br>nové zakázky.</h2>
+  </section>
+
+  <!-- 3) kontakt -->
+  <section class="contact" id="kontakt" data-ink="#F8B2AD">
+    <div class="body">
+      <div class="reveal">
+        <a class="big" href="https://www.instagram.com/weroll.studio?utm_source=ig_web_button_share_sheet&amp;obrf=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener">Instagram</a><br>
+        <a class="big" href="tel:+420266266028">266 266 028</a><br>
+        <a class="big" href="mailto:hello@weroll.studio">hello@weroll.studio</a>
+      </div>
+      <address class="reveal">
+        Sluneční nám. 2561/3<br>
+        Praha 5, 158 00<br>
+        IČO: 02040816
+      </address>
+    </div>
+    <footer>
+      <span>© 2026 weroll studio</span>
+      <a href="#top" aria-label="nahoru"><span class="logo"></span></a>
+    </footer>
+  </section>
+</main>
+
+<script>
+(() => {
+  const ride   = document.querySelector('.ride');
+  const track  = document.querySelector('.track');
+  const corner = document.querySelector('.corner');
+  const thumb  = document.querySelector('.rail i');
+  const inkSections = [...document.querySelectorAll('[data-ink]')];
+
+  let maxShift = 0;
+  const measure = () => {
+    // dojede, až poslední klient projde přes levou třetinu obrazovky
+    const last = track.lastElementChild;
+    maxShift = last.offsetLeft + last.offsetWidth - window.innerWidth * 0.32;
+  };
+
+  const tick = () => {
+    const vh = window.innerHeight;
+    const y = window.scrollY;
+
+    // horizontální jízda
+    const start = ride.offsetTop;
+    const dist = ride.offsetHeight - vh;
+    const p = Math.min(1, Math.max(0, (y - start) / dist));
+    track.style.transform = `translate3d(${-p * maxShift}px,0,0)`;
+
+    // ikona vlevo nahoře se ukáže, když logo odjede
+    corner.classList.toggle('on', p > 0.06);
+
+    // barva ikony a ukazatele podle sekce pod nimi
+    let ink = '#FFFFFF';
+    for (const s of inkSections) if (s.getBoundingClientRect().top <= 40) ink = s.dataset.ink;
+    document.documentElement.style.setProperty('--ink', ink);
+
+    // ukazatel scrollu
+    const total = document.documentElement.scrollHeight - vh;
+    const q = total > 0 ? y / total : 0;
+    thumb.style.top = `${q * (vh - 44)}px`;
+  };
+
+  // nájezd textů
+  const io = new IntersectionObserver(es => es.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+  }), { threshold: 0.25 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  let raf = 0;
+  const onScroll = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; tick(); }); };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', () => { measure(); tick(); });
+
+  const boot = () => { measure(); tick(); document.body.classList.add('ready'); };
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(() => setTimeout(boot, 600));
+})();
+</script>
+</body>
+</html>
